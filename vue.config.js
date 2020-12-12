@@ -47,7 +47,9 @@ module.exports = {
       alias: {
         'common': '@/common',
         'components': '@/components',
+        'api': '@/api',
       }
     }
   },
+  lintOnSave: false
 }
