@@ -1,18 +1,30 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
   </div>
 </template>
 
 <script>
-import VHeader from 'components/v-header/v-header'
+import VHeader from "components/v-header/v-header";
+import { getSeller } from "./api";
 
 export default {
-  name: 'App',
+  name: "App",
+  data() {
+    return {
+      seller: {},
+    };
+  },
+  created() {
+    getSeller().then((seller) => {
+      console.log(seller)
+      this.seller = seller;
+    });
+  },
   components: {
-    VHeader
-  }
-}
+    VHeader,
+  },
+};
 </script>
 
 <style lang="scss">

@@ -16,7 +16,6 @@
     computed: {
       iconCls() {
         const classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
-        console.log(`icon-${this.size} ${classMap[this.type]}`)
         return `icon-${this.size} ${classMap[this.type]}`
       }
     }
