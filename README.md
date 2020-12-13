@@ -26,4 +26,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### 相关依赖
 
 - cube-ui
+  - create-api
 - axios
+- 
