@@ -1,12 +1,16 @@
 <template>
   <div id="app">
     <v-header :seller="seller"></v-header>
+    <div>
+      <tab></tab>
+    </div>
   </div>
 </template>
 
 <script>
-import VHeader from "components/v-header/v-header";
 import { getSeller } from "./api";
+import VHeader from "components/v-header/v-header";
+import Tab from "components/tab/tab";
 
 export default {
   name: "App",
@@ -27,6 +31,7 @@ export default {
   },
   components: {
     VHeader,
+    Tab,
   },
 };
 </script>
