@@ -123,7 +123,6 @@ export default {
           ball.show = true;
           ball.el = el;
           this.dropBalls.push(ball);
-          console.log(this.dropBalls)
           return;
         }
       }
