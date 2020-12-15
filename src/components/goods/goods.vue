@@ -31,6 +31,9 @@
                     >￥{{ food.oldPrice }}</span
                   >
                 </div>
+                <div class="cart-control-wrapper">
+                  <cart-control @add="onAdd" :food="food"></cart-control>
+                </div>
               </div>
             </li>
           </ul>
@@ -39,6 +42,8 @@
     </div>
     <div class="shop-cart-wrapper">
       <shop-cart
+        ref="shopCart"
+        :selectFoods="selectFoods"
         :deliveryPrice="seller.deliveryPrice"
         :minPrice="seller.minPrice"
       ></shop-cart>
@@ -49,6 +54,7 @@
 <script>
 import { getGoods } from "api";
 import ShopCart from "components/shop-cart/shop-cart";
+import CartControl from "components/cart-control/cart-control";
 
 export default {
   name: "goods",
@@ -72,7 +78,18 @@ export default {
   },
   computed: {
     seller() {
-      return this.data
+      return this.data.seller;
+    },
+    selectFoods() {
+      let foods = [];
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            foods.push(food);
+          }
+        });
+      });
+      return foods;
     },
   },
   methods: {
@@ -84,6 +101,7 @@ export default {
   },
   components: {
     ShopCart,
+    CartControl,
   },
 };
 </script>
