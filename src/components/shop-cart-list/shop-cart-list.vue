@@ -8,11 +8,11 @@
       type="shop-cart-list"
       @mask-click="maskClick"
     >
-      <transition name="move">
+      <transition name="move" @after-leave="onLeave">
         <div v-show="visible">
           <div class="list-header">
             <h1 class="title">购物车</h1>
-            <span class="empty">清空</span>
+            <span class="empty" @click="empty">清空</span>
           </div>
           <cube-scroll class="list-content" ref="listContent">
             <ul>
@@ -26,7 +26,7 @@
                   <span>￥{{ food.price * food.count }}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control @add="onAdd" :food="food"></cart-control>
                 </div>
               </li>
             </ul>
@@ -62,16 +62,36 @@ export default {
       visible: false,
     };
   },
+  created() {
+    this.$on(EVENT_SHOW,()=>{
+      this.$nextTick(()=>{
+        this.$refs.listContent.refresh()
+      })
+    })
+  },
   methods: {
-    show() {
-      this.visible = true;
-    },
-    hide() {
-      this.visible = false;
-      this.$emit(EVENT_HIDE)
-    },
     maskClick() {
       this.hide();
+    },
+    onLeave() {
+      this.$emit(EVENT_LEAVE);
+    },
+    onAdd(target) {
+      this.$emit(EVENT_ADD, target);
+    },
+    empty() {
+      this.dialogComp = this.$createDialog({
+        type: "confim",
+        content: "确认清空购物车吗？",
+        $events: {
+          confirm: () => {
+            this.selectFoods.forEach((food) => {
+              food.count = 0;
+            });
+            this.hide();
+          },
+        },
+      }).show();
     },
   },
   components: {

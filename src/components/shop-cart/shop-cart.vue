@@ -20,7 +20,7 @@
           <div class="desc">另需配送费￥{{ deliveryPrice }}元</div>
         </div>
         <div class="content-right">
-          <div class="pay" :class="payClass">
+          <div class="pay" :class="payClass" @click="pay">
             {{ payDesc }}
           </div>
         </div>
@@ -73,15 +73,23 @@ export default {
       type: Number,
       default: 0,
     },
+    fold: {
+      type: Boolean,
+      default: true,
+    },
+    sticky: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       balls: createBalls(),
+      listFold: this.fold,
     };
   },
   created() {
     this.dropBalls = [];
-    this.listFold = true;
   },
   computed: {
     totalPrice() {
@@ -159,6 +167,7 @@ export default {
         }
         this.listFold = false;
         this._showShopCartList();
+        this._showShopCartSticky();
       } else {
         this.listFold = true;
         this._hideShopCartList();
@@ -173,15 +182,59 @@ export default {
           },
           $events: {
             hide: () => {
-              hide();
+              this.listFold = true;
+            },
+            leave: () => {
+              this._hideShopCartSticky();
+            },
+            add: (el) => {
+              this.shopCartStickyComp.drop(el);
             },
           },
         });
-      console.log(this.shopCartListComp);
       this.shopCartListComp.show();
     },
+    _showShopCartSticky() {
+      this.shopCartStickyComp =
+        this.shopCartStickyComp ||
+        this.$createShopCartSticky({
+          $props: {
+            selectFoods: "selectFoods",
+            deliveryPrice: "deliveryPrice",
+            minPrice: "minPrice",
+            fold: "listFold",
+            list: this.shopCartListComp,
+          },
+        });
+      this.shopCartStickyComp.show();
+    },
     _hideShopCartList() {
-      this.shopCartListComp.hide();
+      const list = this.sticky ? this.$parent.list : this.shopCartListComp;
+      list.hide && list.hide();
+    },
+    _hideShopCartSticky() {
+      this.shopCartStickyComp.hide();
+    },
+    pay(e) {
+      if (this.totalPrice < this.minPrice) {
+        return;
+      }
+      this.dialogComp = this.$createDialog({
+        title: "支付",
+        content: `您需要支付共${this.totalPrice}元`,
+      })
+      this.dialogComp.show();
+      e.stopPropagation();
+    },
+  },
+  watch: {
+    fold(newVal) {
+      this.listFold = newVal;
+    },
+    totalCount(newVal) {
+      if (!this.listFold && !newVal) {
+        this._hideShopCartList();
+      }
     },
   },
   components: {
